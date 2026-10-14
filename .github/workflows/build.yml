@@ -37,11 +37,23 @@ jobs:
       - name: Linter (gradle)
         run: ./gradlew ktlintCheck
 
+      - name: Android lint (gradle)
+        run: ./gradlew lint --no-daemon
+
       - name: Test (gradle)
         run: ./gradlew test --no-daemon
 
+      - name: Python security regressions
+        run: |
+          if [ -d tests ]; then
+            python3 -m unittest discover -s tests -p 'test_*.py' -v
+          fi
+
       - name: Build APK (gradle)
         run: ./gradlew assembleDebug --no-daemon
+
+      - name: Build free release APK (gradle)
+        run: ./gradlew :app:assembleFreeRelease --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v7
